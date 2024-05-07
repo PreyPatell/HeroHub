@@ -19,25 +19,28 @@ const validator = require('validator')
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
 
-mongoose.connect('mongodb+srv://ppate454:prey@cluster0.c8hmqab.mongodb.net/', {
+require('dotenv').config(); // Load environment variables from .env file
+
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-    .then(() => {
-        console.log('DB Connected');
-    })
-    .catch((e) => {
-        console.log('DB not Connected', e);
-    })
+.then(() => {
+    console.log('DB Connected');
+})
+.catch((e) => {
+    console.log('DB not Connected', e);
+});
 
 app.use(express.json());
 app.use(session({
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 const User = mongoose.model('User', {
     email: { type: String, required: true, unique: true },
